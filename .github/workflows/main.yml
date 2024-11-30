@@ -102,6 +102,7 @@ jobs:
     name: Upload All Scan Results to DefectDojo
     runs-on: ubuntu-latest
     needs: [sast_scan, sca_scan, image_scan] # Ensure this job runs after other scans
+    if: always()
 
     steps:
     - name: Download All Artifacts
