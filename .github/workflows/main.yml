@@ -99,12 +99,20 @@ jobs:
         path: scout-report.sarif
 
   upload_reports:
-    name: Upload Scan Reports
+    name: Upload Scan Reports to DefectDojo
     runs-on: ubuntu-latest
+    needs: [sast_scan, sca_scan, image_scan]
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
+    - name: Download Previous Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: '*-findings'
+        merge-multiple: true
+        path: reports
 
     - name: Set up python
       uses: actions/setup-python@v4
@@ -114,11 +122,12 @@ jobs:
     - name: Install Requests
       run: pip install Requests
 
-    - name: Upload Scan Reports to DefectDojo
+    - name: Upload to DefectDojo
+      run: python upload-reports.py
+
+    - name: Archive Reports
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: scan-reports
-        path: |
-          bandit-report.json
-          sca-report.json
-          scout-report.sarif
+        path: reports/
