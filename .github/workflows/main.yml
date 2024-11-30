@@ -98,3 +98,24 @@ jobs:
         name: docker-scout-findings
         path: scout-report.sarif
 
+  upload_to_defectdojo:
+    name: Upload All Scan Results to DefectDojo
+    runs-on: ubuntu-latest
+    needs: [sast_scan, sca_scan, image_scan] # Ensure this job runs after other scans
+
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+
+    - name: Set Up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+
+    - name: Install Requests Library
+      run: pip install requests
+
+    - name: Upload All Artifacts to DefectDojo
+      run: python defectdojo_upload.py ./artifacts
