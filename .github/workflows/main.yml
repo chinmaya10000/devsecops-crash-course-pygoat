@@ -102,6 +102,7 @@ jobs:
     name: Upload Scan Reports to DefectDojo
     runs-on: ubuntu-latest
     needs: [sast_scan, sca_scan, image_scan]  # Ensures this runs after the other jobs
+    if: always()
 
     steps:
     - name: Checkout Code
