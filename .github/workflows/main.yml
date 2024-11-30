@@ -119,4 +119,4 @@ jobs:
       run: pip install requests
 
     - name: Upload All Artifacts to DefectDojo
-      run: python defectdojo_upload.py ./artifacts
+      run: python upload-reports.py ./artifacts
