@@ -99,28 +99,26 @@ jobs:
         path: scout-report.sarif
 
   upload_reports:
-    name: Upload Scan Reports to DefectDojo
+    name: Upload Scan Reports
     runs-on: ubuntu-latest
-    needs: [sast_scan, sca_scan, image_scan]  # Ensures this runs after the other jobs
-    if: always()
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Install Python and Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
+    - name: Set up python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
 
-    - name: Upload Bandit Report to DefectDojo
-      run: |
-        python upload-reports.py bandit-report.json
-    
-    - name: Upload Safety Report to DefectDojo
-      run: |
-        python upload-reports.py sca-report.json
+    - name: Install Requests
+      run: pip install Requests
 
-    - name: Upload Scout Report to DefectDojo
-      run: |
-        python upload-reports.py scout-report.sarif
+    - name: Upload Scan Reports to DefectDojo
+      uses: actions/upload-artifact@v4
+      with:
+        name: scan-reports
+        path: |
+          bandit-report.json
+          sca-report.json
+          scout-report.sarif
